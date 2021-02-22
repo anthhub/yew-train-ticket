@@ -3,8 +3,10 @@
 #![allow(clippy::eval_order_dependence)]
 
 pub mod app;
-pub mod components;
 pub mod routes;
+pub mod store;
+pub mod components;
+pub mod index;
 
 use wasm_bindgen::prelude::*;
 
