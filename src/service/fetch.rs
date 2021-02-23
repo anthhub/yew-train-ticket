@@ -1,11 +1,17 @@
 #![allow(unused_variables)]
 
+use yew::web_sys;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::console;
 use web_sys::{Request, RequestInit, RequestMode, Response};
-use yew::services::fetch::Method;
+
+pub enum Method{
+    GET,
+    POST,
+    Delete,
+}
 
 #[wasm_bindgen]
 pub async fn fetch(url: String, method: String) -> Result<JsValue, JsValue> {

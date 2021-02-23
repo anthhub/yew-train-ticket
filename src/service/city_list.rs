@@ -36,11 +36,8 @@ pub struct City {
     pub name: String,
 }
 
-
-
-// #[wasm_bindgen]
 pub async fn get_city_list() -> CityResult {
-    let url = format!("http://localhost:80/rest/cities?_1593270305661");
+    let url = format!("http://localhost:7000/api/cities?_1593270305661");
     let json = Fetch::get(url).await;
 
     match json {

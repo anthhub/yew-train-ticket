@@ -1,7 +1,6 @@
 #![allow(unused_variables)]
 use super::fetch::Fetch;
-use serde::{Deserialize, Serialize,};
-
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SearchCityResult {
@@ -21,11 +20,8 @@ pub struct SearchResult {
     pub display: String
 }
 
-
-
-// #[wasm_bindgen]
 pub async fn search_city_list(search_word : String) -> SearchCityResult {
-    let url = format!("http://localhost:80/rest/search?key={}",search_word);
+    let url = format!("http://localhost:7000/api/search?key={}",search_word);
     let json = Fetch::get(url).await;
 
     match json {

@@ -1,5 +1,5 @@
 use crate::components::header::Header;
-// use crate::index::city_selector::CitySelector;
+use crate::index::city_selector::CitySelector;
 use crate::index::date_selector::DateSelector;
 
 use crate::index::depart_date::DepartDate;
@@ -7,11 +7,11 @@ use crate::index::high_speed::HighSpeed;
 use crate::index::journey::Journey;
 use crate::index::submit::Submit;
 
-use crate::store::store::{reducer, Action, StoreDispatch, StoreModel};
+use crate::store::store::{reducer, Action, StoreModel};
 use chrono::prelude::*;
 use yew::web_sys;
+
 use std::rc::Rc;
-use web_sys::console;
 
 use yew::{html, Callback, MouseEvent};
 use yew_functional::function_component;
@@ -20,7 +20,6 @@ use yew_functional::{use_reducer_with_init,ContextProvider};
 
 #[function_component(Index)]
 pub fn index() -> Html {
-    // Rc<impl Fn(Action)>
         let initail_state = StoreModel {
             from: "北京".to_string(),
             to: "上海".to_string(),
@@ -36,10 +35,7 @@ pub fn index() -> Html {
                 initail_state
             });
 
-        // let dispatch1 = dispatch.clone();
-        // let dispatch2 = StoreDispatch(dispatch1);
         type StoreModelContextProvider = ContextProvider<Rc<StoreModel>>;
-        // type StoreDispatchContextProvider = ContextProvider<StoreDispatch>;
 
         let window = web_sys::window().unwrap();
         let history = window
@@ -94,7 +90,7 @@ pub fn index() -> Html {
         };
 
         // 选择日期
-        let onselect: Callback<DateTime<Local>> = { 
+        let onselectdate: Callback<DateTime<Local>> = { 
             let dispatch = dispatch.clone();
             Callback::from(move |day: DateTime<Local>|{ 
                 dispatch(Action::SelectDate(day));
@@ -103,16 +99,37 @@ pub fn index() -> Html {
         };
 
         // 隐藏日期选择框
-        let onhide: Callback<MouseEvent> = { 
+        let ontoggledateselectorvisible: Callback<MouseEvent> = { 
             let dispatch = dispatch.clone();
             Callback::from(move |_|{ 
                 dispatch(Action::ToggleDateSelectorVisible)
             })
         };
 
+        // 隐藏城市选择框
+        let ontogglecityselectorvisible: Callback<MouseEvent> = { 
+            let dispatch = dispatch.clone();
+            Callback::from(move |_|{ 
+                dispatch(Action::ToggleCitySelectorVisible)
+            })
+        };
+
+        // 选择 to 或者 from
+        let onselectcity: Callback<String> = { 
+            let dispatch = dispatch.clone();
+            let store = store.clone();
+            Callback::from(move |name: String|{ 
+                if store.is_selecting_from {
+                    dispatch(Action::SelectFrom(name));
+                } else {
+                    dispatch(Action::SelectTo(name));
+                }
+                dispatch(Action::ToggleCitySelectorVisible)
+            })
+        };
+
     html! {
         <>
-            // <StoreDispatchContextProvider context=dispatch2>
                 <StoreModelContextProvider  context=store>
                     <div class="header-wrapper">
                         <Header title="火车票" onback=onback />
@@ -123,10 +140,9 @@ pub fn index() -> Html {
                             <HighSpeed ontoggle=ontogglehighspeed/>
                             <Submit />
                     </form>
-                    <DateSelector onselect=onselect onback=onhide />
-                    // <CitySelector/>
+                    <DateSelector onselectdate=onselectdate onback=ontoggledateselectorvisible />
+                    <CitySelector onselectcity=onselectcity onback=ontogglecityselectorvisible/>
                 </StoreModelContextProvider>
-            // </StoreDispatchContextProvider>
         </>
     }
 }

@@ -11,7 +11,7 @@ use crate::components::header::Header;
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
     pub onback: Callback<MouseEvent>,
-    pub onselect: Callback<DateTime<Local>>,
+    pub onselectdate: Callback<DateTime<Local>>,
 }
 #[function_component(DateSelector)]
 pub fn date_selector(props: &Props) -> Html {
@@ -27,7 +27,7 @@ pub fn date_selector(props: &Props) -> Html {
 
     let hidden_class = if *show { "" } else { "hidden" };
 
-    let Props { onback, onselect } = &props;
+    let Props { onback, onselectdate } = &props;
 
     return html! {
         <div class=format!("date-selector {}", hidden_class) >
@@ -36,7 +36,7 @@ pub fn date_selector(props: &Props) -> Html {
             />
             <div class="date-selector-tables" >
             {for date_list.iter().map(|date| {
-                html! { <Month date=date onselect=onselect /> }
+                html! { <Month date=date onselectdate=onselectdate /> }
             })}
             </div>
         </div>
@@ -46,11 +46,11 @@ pub fn date_selector(props: &Props) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct MonthProps {
     pub date: DateTime<Local>,
-    pub onselect: Callback<DateTime<Local>>,
+    pub onselectdate: Callback<DateTime<Local>>,
 }
 #[function_component(Month)]
 fn month(props: &MonthProps) -> Html {
-    let MonthProps { date, onselect } = &props;
+    let MonthProps { date, onselectdate } = &props;
     let the_month = date.month();
     let next_month_date = date.with_month(the_month + 1).unwrap_or(*date);
     let year_month = date.format("%Y年%m月").to_string();
@@ -124,7 +124,7 @@ fn month(props: &MonthProps) -> Html {
                     <th class="weekend">{"周日"}</th>
                 </tr>
                 {for matrix.iter().map(|the_week| {
-                    html! { <Week the_week=the_week onselect=onselect /> }
+                    html! { <Week the_week=the_week onselectdate=onselectdate /> }
                 })}
             </tbody>
         </table>
@@ -135,18 +135,18 @@ fn month(props: &MonthProps) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct WeekProps {
     pub the_week: Vec<Option<DateTime<Local>>>,
-    pub onselect: Callback<DateTime<Local>>,
+    pub onselectdate: Callback<DateTime<Local>>,
 }
 #[function_component(Week)]
 fn week(props: &WeekProps) -> Html {
-    let WeekProps { the_week, onselect } = &props;
+    let WeekProps { the_week, onselectdate } = &props;
 
     return html! {
         <tr
         class="date-table-days"
         >
             {for the_week.iter().map(|date| {
-                html! { <Day date=date onselect=onselect /> }
+                html! { <Day date=date onselectdate=onselectdate /> }
             })}
         </tr>
     };
@@ -156,16 +156,16 @@ fn week(props: &WeekProps) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct DayProps {
     pub date: Option<DateTime<Local>>,
-    pub onselect: Callback<DateTime<Local>>,
+    pub onselectdate: Callback<DateTime<Local>>,
 }
 #[function_component(Day)]
 fn day(props: &DayProps) -> Html {
-    let DayProps { date, onselect } = &props;
-    let onselect = onselect.clone();
+    let DayProps { date, onselectdate } = &props;
+    let onselectdate = onselectdate.clone();
 
     let now = Local::now();
 
-    let (the_day, day_str, is_today, prev_class, weekend_class, date_str) = match *date {
+    let (the_day, day_str, is_today, prev_class, weekend_class) = match *date {
         Some(the_day) => {
             let weekend_class = match the_day.weekday() {
                 chrono::Weekday::Sat | chrono::Weekday::Sun => "weekend",
@@ -181,18 +181,17 @@ fn day(props: &DayProps) -> Html {
                 } else {
                     ""
                 },
-                weekend_class,
-                format!("{}-{}-{}",the_day.year(),the_day.month(),the_day.day()),
+                weekend_class
             )
         }
-        None => (Local::now(), "".to_string(), false, "", "", "".to_string()),
+        None => (Local::now(), "".to_string(), false, "", ""),
     };
 
-    // // 选择日期
+    // 选择日期
     let onselectday: Callback<MouseEvent> = { 
         Callback::from(move |_|{ 
             if the_day.day() >= now.day() || the_day.month() > now.month() {
-                onselect.emit(the_day)
+                onselectdate.emit(the_day)
             }
         })
     };
@@ -200,7 +199,6 @@ fn day(props: &DayProps) -> Html {
     return html! {
         <td
         onclick=onselectday
-        id = {format!("{}",date_str)}
         class={format!("{} {}",weekend_class,prev_class)}
         >
             { if is_today { "今天".to_string() } else { day_str } }
