@@ -11,7 +11,7 @@ use crate::components::header::Header;
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
     pub onback: Callback<MouseEvent>,
-    pub onselect: Callback<MouseEvent>,
+    pub onselect: Callback<DateTime<Local>>,
 }
 #[function_component(DateSelector)]
 pub fn date_selector(props: &Props) -> Html {
@@ -34,7 +34,7 @@ pub fn date_selector(props: &Props) -> Html {
             <Header title="日期选择"
             onback=onback
             />
-            <div class="date-selector-tables">
+            <div class="date-selector-tables" >
             {for date_list.iter().map(|date| {
                 html! { <Month date=date onselect=onselect /> }
             })}
@@ -46,7 +46,7 @@ pub fn date_selector(props: &Props) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct MonthProps {
     pub date: DateTime<Local>,
-    pub onselect: Callback<MouseEvent>,
+    pub onselect: Callback<DateTime<Local>>,
 }
 #[function_component(Month)]
 fn month(props: &MonthProps) -> Html {
@@ -135,7 +135,7 @@ fn month(props: &MonthProps) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct WeekProps {
     pub the_week: Vec<Option<DateTime<Local>>>,
-    pub onselect: Callback<MouseEvent>,
+    pub onselect: Callback<DateTime<Local>>,
 }
 #[function_component(Week)]
 fn week(props: &WeekProps) -> Html {
@@ -156,14 +156,16 @@ fn week(props: &WeekProps) -> Html {
 #[derive(Properties, Clone, PartialEq)]
 pub struct DayProps {
     pub date: Option<DateTime<Local>>,
-    pub onselect: Callback<MouseEvent>,
+    pub onselect: Callback<DateTime<Local>>,
 }
 #[function_component(Day)]
 fn day(props: &DayProps) -> Html {
     let DayProps { date, onselect } = &props;
+    let onselect = onselect.clone();
+
     let now = Local::now();
 
-    let (the_day, day_str, is_today, prev_class, weekend_class) = match *date {
+    let (the_day, day_str, is_today, prev_class, weekend_class, date_str) = match *date {
         Some(the_day) => {
             let weekend_class = match the_day.weekday() {
                 chrono::Weekday::Sat | chrono::Weekday::Sun => "weekend",
@@ -180,14 +182,25 @@ fn day(props: &DayProps) -> Html {
                     ""
                 },
                 weekend_class,
+                format!("{}-{}-{}",the_day.year(),the_day.month(),the_day.day()),
             )
         }
-        None => (Local::now(), "".to_string(), false, "", ""),
+        None => (Local::now(), "".to_string(), false, "", "", "".to_string()),
+    };
+
+    // // 选择日期
+    let onselectday: Callback<MouseEvent> = { 
+        Callback::from(move |_|{ 
+            if the_day.day() >= now.day() || the_day.month() > now.month() {
+                onselect.emit(the_day)
+            }
+        })
     };
 
     return html! {
         <td
-        onclick=onselect
+        onclick=onselectday
+        id = {format!("{}",date_str)}
         class={format!("{} {}",weekend_class,prev_class)}
         >
             { if is_today { "今天".to_string() } else { day_str } }

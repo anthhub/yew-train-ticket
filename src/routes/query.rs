@@ -1,5 +1,5 @@
 
-use yew::{html, Callback,  MouseEvent, Properties};
+use yew::{html, Callback, Properties};
 use yew_functional::function_component;
 use crate::components::header::Header;
 use yew_router::service::RouteService;
@@ -26,7 +26,7 @@ pub fn query(_props: &Props) -> Html {
     let history = window
         .history()
         .expect("browser does not support history API");
-    // 路由回退
+
     let onback = Callback::from(move |_| {
         history.back().expect("back error");
         ()

@@ -1,5 +1,5 @@
 
-use yew::{html, Callback,  MouseEvent, Properties};
+use yew::{html, Properties};
 use yew_functional::function_component;
 
 #[derive(Properties, Clone, PartialEq)]

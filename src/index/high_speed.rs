@@ -21,7 +21,7 @@ pub fn high_speed(props: &Props) -> Html {
 
     return html! {
          <div class="high-speed">
-            <div class="high-speed-label">{"只看高铁/动车"}</div>
+            <div id="high-speed-label" class="high-speed-label">{"只看高铁/动车"}</div>
             <div class="high-speed-switch"
             onclick=ontoggle
             >
