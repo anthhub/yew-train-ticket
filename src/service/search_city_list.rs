@@ -21,7 +21,8 @@ pub struct SearchResult {
 }
 
 pub async fn search_city_list(search_word : String) -> SearchCityResult {
-    let url = format!("http://localhost:7000/api/search?key={}",search_word);
+    let base_url = "http://118.190.37.169:7000";
+    let url = format!("{}/api/search?key={}", base_url, search_word);
     let json = Fetch::get(url).await;
 
     match json {

@@ -36,8 +36,10 @@ pub struct City {
     pub name: String,
 }
 
+
 pub async fn get_city_list() -> CityResult {
-    let url = format!("http://localhost:7000/api/cities?_1593270305661");
+    let base_url = "http://118.190.37.169:7000";
+    let url = format!("{}/api/cities", base_url);
     let json = Fetch::get(url).await;
 
     match json {
