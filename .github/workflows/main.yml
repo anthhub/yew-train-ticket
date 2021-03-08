@@ -30,4 +30,4 @@ jobs:
           REMOTE_HOST: "118.190.37.169"
           # 用户
           REMOTE_USER: "root"
-          TARGET: "/root/web/anthhub/deploy/yew-train-ticket-new"
+          TARGET: "/root/web/anthhub/deploy/yew-train-ticket"

@@ -9,18 +9,21 @@ pub struct SearchCityResult {
 }
 
 impl SearchCityResult {
-  pub  fn new() -> SearchCityResult{
-    SearchCityResult{result : vec![]  ,searchKey :"".to_string() }
-   }
+    pub fn new() -> SearchCityResult {
+        SearchCityResult {
+            result: vec![],
+            searchKey: "".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SearchResult {
-    pub  key: String,
-    pub display: String
+    pub key: String,
+    pub display: String,
 }
 
-pub async fn search_city_list(search_word : String) -> SearchCityResult {
+pub async fn search_city_list(search_word: String) -> SearchCityResult {
     let base_url = "http://118.190.37.169:7000";
     let url = format!("{}/api/search?key={}", base_url, search_word);
     let json = Fetch::get(url).await;
@@ -29,5 +32,4 @@ pub async fn search_city_list(search_word : String) -> SearchCityResult {
         Ok(json) => json.into_serde().unwrap(),
         Err(_) => SearchCityResult::new(),
     }
-   
 }
