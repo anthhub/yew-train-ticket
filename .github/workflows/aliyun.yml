@@ -9,7 +9,7 @@ on:
 env:
   NAMESPACE: namespace
   TAG: 0.0.${{ github.run_number }}
-  REPO: https://anthhub.github.io/ye'w-train-ticket
+  REPO: https://anthhub.github.io/yew-train-ticket
   REQ: $(curl -s https://anthhub.github.io/yew-train-ticket/latest?q=$RANDOM) 
   APP: yew-train-ticket
   HOST: "118.190.37.169"
@@ -44,7 +44,15 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-  
+          
+      - name: Cache NPM Dependences
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v1
         with: 
