@@ -16,9 +16,9 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 log = "0.4"
-yew = { git = "https://github.com/yewstack/yew"}
-yew-functional = { git = "https://github.com/yewstack/yew"}
-yew-router = { git = "https://github.com/yewstack/yew"}
+yew = { rev="d1f15b6f862d555023c18a48c5fb154e539be22b", git = "https://github.com/yewstack/yew"}
+yew-functional = { rev="d1f15b6f862d555023c18a48c5fb154e539be22b",  git = "https://github.com/yewstack/yew"}
+yew-router = { rev="d1f15b6f862d555023c18a48c5fb154e539be22b",  git = "https://github.com/yewstack/yew"}
 wasm-logger = "0.2.0"
 wee_alloc = "0.4.5"
 urlparse = "0.7.3"
