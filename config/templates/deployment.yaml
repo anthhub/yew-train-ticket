@@ -32,9 +32,12 @@ spec:
         - name: {{ .Values.service.app }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}
             limits:
-              memory: "32Mi"
-              cpu: "0.2"
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
           ports:
             - name: web
               containerPort: {{ .Values.service.port }}
