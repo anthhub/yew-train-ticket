@@ -24,7 +24,8 @@ pub struct SearchResult {
 }
 
 pub async fn search_city_list(search_word: String) -> SearchCityResult {
-    let base_url = "http://118.190.37.169:7000";
+    // let base_url = "http://118.190.37.169:7000";
+    let base_url = "http://att.liuma.top";
     let url = format!("{}/api/search?key={}", base_url, search_word);
     let json = Fetch::get(url).await;
 
