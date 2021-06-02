@@ -77,6 +77,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./.helm
+          commit_message: "helm repo: ${{ env.REPO }}?v=${{ env.TAG }} deployed!"
 
       - name: Setup Helm
         timeout-minutes: 10
