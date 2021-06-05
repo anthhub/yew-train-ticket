@@ -1,0 +1,31 @@
+  apiVersion: v1
+  kind: Service
+  metadata:
+   name: kubernetes-dashboard
+   namespace: default
+  spec:
+   ports:
+   - name: https
+     port: 443
+     protocol: TCP
+     targetPort: 443
+   sessionAffinity: None
+   type: ExternalName
+   externalName: kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kubernetes-dashboard-route-secure
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`kube.liuma.top`)
+      kind: Rule
+      services:
+        - name: kubernetes-dashboard
+          port: 443
+  tls:
+    secretName: who-tls

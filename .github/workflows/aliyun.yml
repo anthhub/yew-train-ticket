@@ -12,7 +12,7 @@ env:
   REPO: https://anthhub.github.io/yew-train-ticket
   REQ: $(curl -s https://anthhub.github.io/yew-train-ticket/latest?q=$RANDOM) 
   APP: yew-train-ticket
-  HOST: "118.190.37.169"
+  HOST: ${{ secrets.ALI_HOST }}
   DOMAIN: anthhub/yew-train-ticket
 
 jobs:
@@ -77,6 +77,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./.helm
+          keep_files: true
           commit_message: "helm repo: ${{ env.REPO }}?v=${{ env.TAG }} deployed!"
 
       - name: Setup Helm
@@ -102,12 +103,7 @@ jobs:
             helm repo add ${{ env.APP }} ${{ env.REPO }} || error_exit "$LINENO failed: helm repo add ${{ env.APP }} "
             helm repo update || error_exit "$LINENO failed: helm repo update"
             helm search repo ${{ env.APP }} || error_exit "$LINENO failed: helm search repo ${{ env.APP }}"
-            if helm status ${{ env.APP }} 
-            then
-              helm upgrade ${{ env.APP }} ${{ env.APP }}/mychart --version=${{ env.TAG }} --set image.tag=${{ env.TAG }} || error_exit "$LINENO failed: helm upgrade ${{ env.APP }} ${{ env.APP }}/mychart"
-            else
-              helm install ${{ env.APP }} ${{ env.APP }}/mychart --version=${{ env.TAG }} --set image.tag=${{ env.TAG }} || error_exit "$LINENO failed: helm install ${{ env.APP }} ${{ env.APP }}/mychart"
-            fi 
 
+            helm upgrade -i ${{ env.APP }} ${{ env.APP }}/mychart --version=${{ env.TAG }} --set image.tag=${{ env.TAG }} || error_exit "$LINENO failed: helm upgrade ${{ env.APP }} ${{ env.APP }}/mychart"
             helm ls
 
